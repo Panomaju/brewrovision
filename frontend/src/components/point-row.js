@@ -41,6 +41,12 @@ export class PointRow extends LitElement {
         setTimeout(
             () => {
                 this.shownPoints += 1;
+
+                if (this.shownPoints === this.points) {
+                    setTimeout(() => {
+                        this.pointsChange = undefined;
+                    }, 2000);
+                }
             },
             Math.floor(Math.random() * delay * 2) + delay,
         );
