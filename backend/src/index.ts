@@ -124,8 +124,6 @@ app.get("/get-score-data", (c) => {
 app.post("/update-participant-data", async (c) => {
   let data = await c.req.json();
 
-  data = data.sort((a, b) => b.score - a.score);
-
   writeData(DATA_FILE_PATH, data);
 
   broadcastUpdate();
@@ -166,6 +164,7 @@ function checkForDataFile() {
     return COUNTRIES.filter((c) => c.id !== country.id).map((c) => ({
       countryId: c.id,
       score: 0,
+      published: false,
     }));
   }
 

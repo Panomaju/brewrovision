@@ -17,17 +17,3 @@ body {
     padding: 10%;
     box-sizing: border-box;
 }
-
-.part-view {
-    display: flex;
-}
-
-.participants {
-    display: flex;
-    flex-direction: column;
-}
-
-.participant {
-    margin-bottom: 1rem;
-    font-size: 1.6rem;
-}
