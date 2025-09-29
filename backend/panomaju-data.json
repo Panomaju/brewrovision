@@ -1,1 +1,499 @@
-[{"name":"Foobar","score":"0"}]
+{
+    "participants": [
+        {
+            "country": {
+                "id": 1,
+                "name": "Finland",
+                "flag": "https://www.countryflags.com/wp-content/uploads/finland-flag-png-large.png"
+            },
+            "scores": {
+                "Pale Lager": [
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Pale Belgian": [
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "IPA": [
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Dark Strong": [
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Sour Beer": [
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ]
+            }
+        },
+        {
+            "country": {
+                "id": 2,
+                "name": "Scotland",
+                "flag": "https://www.countryflags.com/wp-content/uploads/scotland-flag-jpg-xl.jpg"
+            },
+            "scores": {
+                "Pale Lager": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Pale Belgian": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "IPA": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Dark Strong": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Sour Beer": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ]
+            }
+        },
+        {
+            "country": {
+                "id": 3,
+                "name": "England",
+                "flag": "https://www.countryflags.com/wp-content/uploads/england-flag-jpg-xl.jpg"
+            },
+            "scores": {
+                "Pale Lager": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Pale Belgian": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "IPA": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Dark Strong": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Sour Beer": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ]
+            }
+        },
+        {
+            "country": {
+                "id": 4,
+                "name": "Ireland",
+                "flag": "https://www.countryflags.com/wp-content/uploads/ireland-flag-png-large.png"
+            },
+            "scores": {
+                "Pale Lager": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Pale Belgian": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "IPA": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Dark Strong": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ],
+                "Sour Beer": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 5,
+                        "score": 0
+                    }
+                ]
+            }
+        },
+        {
+            "country": {
+                "id": 5,
+                "name": "Poland",
+                "flag": "https://www.countryflags.com/wp-content/uploads/poland-flag-png-large.png"
+            },
+            "scores": {
+                "Pale Lager": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    }
+                ],
+                "Pale Belgian": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    }
+                ],
+                "IPA": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    }
+                ],
+                "Dark Strong": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    }
+                ],
+                "Sour Beer": [
+                    {
+                        "countryId": 1,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 2,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 3,
+                        "score": 0
+                    },
+                    {
+                        "countryId": 4,
+                        "score": 0
+                    }
+                ]
+            }
+        }
+    ]
+}

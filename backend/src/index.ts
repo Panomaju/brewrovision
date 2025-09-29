@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import { createNodeWebSocket } from "@hono/node-ws";
-import { readFileSync, writeFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import type { WSContext } from "hono/ws";
@@ -44,8 +44,7 @@ const SERVER_URL = IS_PROD
   ? "https://panomaju-api.matsu.beer"
   : "http://localhost:3000";
 
-const SCORE_FILE_PATH = "./panomaju-data.json";
-const PARTICIPANT_FILE_PATH = "./panomaju-data.json";
+const DATA_FILE_PATH = "./panomaju-data.json";
 
 app.get("/", (c) => {
   return c.json({
@@ -56,7 +55,7 @@ app.get("/", (c) => {
 });
 
 app.get("/get-data", (c) => {
-  const participantData = readData(PARTICIPANT_FILE_PATH);
+  const participantData = readData(DATA_FILE_PATH);
   return c.json({
     participantData,
   });
@@ -67,7 +66,7 @@ app.post("/update-participant-data", async (c) => {
 
   data = data.sort((a, b) => b.score - a.score);
 
-  writeData(PARTICIPANT_FILE_PATH, data);
+  writeData(DATA_FILE_PATH, data);
 
   broadcastUpdate();
 
@@ -86,6 +85,77 @@ function readData(filePath: string) {
     return {};
   }
 }
+
+interface Country {
+  id: number;
+  name: string;
+  flag: string;
+}
+
+interface CategoryScores {
+  countryId: number;
+  score: number;
+}
+
+function checkForDataFile() {
+  if (existsSync(DATA_FILE_PATH)) {
+    return;
+  }
+
+  const COUNTRIES: Country[] = [
+    {
+      id: 1,
+      name: "Finland",
+      flag: "https://www.countryflags.com/wp-content/uploads/finland-flag-png-large.png",
+    },
+    {
+      id: 2,
+      name: "Scotland",
+      flag: "https://www.countryflags.com/wp-content/uploads/scotland-flag-jpg-xl.jpg",
+    },
+    {
+      id: 3,
+      name: "England",
+      flag: "https://www.countryflags.com/wp-content/uploads/england-flag-jpg-xl.jpg",
+    },
+    {
+      id: 4,
+      name: "Ireland",
+      flag: "https://www.countryflags.com/wp-content/uploads/ireland-flag-png-large.png",
+    },
+    {
+      id: 5,
+      name: "Poland",
+      flag: "https://www.countryflags.com/wp-content/uploads/poland-flag-png-large.png",
+    },
+  ];
+
+  function createScoreObject(country: Country): CategoryScores[] {
+    return COUNTRIES.filter((c) => c.id !== country.id).map((c) => ({
+      countryId: c.id,
+      score: 0,
+    }));
+  }
+
+  const BASE = {
+    participants: COUNTRIES.map((country) => ({
+      country,
+      scores: {
+        "Pale Lager": createScoreObject(country),
+        "Pale Belgian": createScoreObject(country),
+        IPA: createScoreObject(country),
+        "Dark Strong": createScoreObject(country),
+        "Sour Beer": createScoreObject(country),
+      },
+    })),
+  };
+
+  writeFileSync(DATA_FILE_PATH, JSON.stringify(BASE, null, 4), "utf8");
+
+  console.log("Created initial data file");
+}
+
+checkForDataFile();
 
 const server = serve(
   {
