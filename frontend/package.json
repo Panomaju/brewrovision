@@ -15,7 +15,10 @@
     },
     "dependencies": {
         "@lit-labs/motion": "^1.0.7",
+        "@shoelace-style/shoelace": "^2.20.1",
+        "@tailwindcss/vite": "^4.1.13",
         "lit": "^3.2.1",
-        "suunta": "^4.7.0"
+        "suunta": "^4.7.0",
+        "tailwindcss": "^4.1.13"
     }
 }

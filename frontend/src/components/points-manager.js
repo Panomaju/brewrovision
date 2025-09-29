@@ -21,7 +21,7 @@ export class PointsManager extends LitElement {
                     this.pointsData,
                     row => row.name,
                     row => html`
-                        <point-row ${animate()} logo="${row.logo}" name="${row.name}" points="${row.score}"></point-row>
+                        <point-row ${animate()} logo="${row.flag}" name="${row.name}" points="${row.score}"></point-row>
                     `,
                 )}
             </points-display>

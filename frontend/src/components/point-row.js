@@ -40,13 +40,13 @@ export class PointRow extends LitElement {
         const delay = 25;
         setTimeout(
             () => {
-                this.shownPoints += 1;
-
-                if (this.shownPoints === this.points) {
+                if (this.shownPoints >= this.points) {
                     setTimeout(() => {
                         this.pointsChange = undefined;
                     }, 2000);
+                    return;
                 }
+                this.shownPoints += 1;
             },
             Math.floor(Math.random() * delay * 2) + delay,
         );
@@ -84,6 +84,17 @@ export class PointRow extends LitElement {
             margin: 0;
             font-weight: bold;
             font-size: 1.6rem;
+        }
+
+        .logo-holder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+        }
+
+        .logo-holder img {
+            width: 100%;
         }
 
         *[hidden] {

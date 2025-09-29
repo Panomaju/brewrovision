@@ -5,12 +5,25 @@ import { createState } from "suunta/state";
 import { onNavigation } from "suunta/triggers";
 
 export function ScoreView() {
-    const ws = new WebSocket(getApiUrl() + "/ws");
+    let ws;
 
-    ws.onmessage = msg => {
-        console.log("mssage ", msg);
-        updateData();
-    };
+    function initWs() {
+        console.log("Attempting to open ws connection");
+        ws = new WebSocket(getApiUrl() + "/ws");
+
+        ws.onmessage = msg => {
+            console.log("mssage ", msg);
+            updateData();
+        };
+
+        ws.onclose = () => {
+            setTimeout(() => {
+                initWs();
+            }, 1000);
+        };
+    }
+
+    initWs();
 
     const state = createState({
         participants: [],
@@ -21,8 +34,8 @@ export function ScoreView() {
     });
 
     async function updateData() {
-        const data = await fetch(getApiUrl() + "/get-data").then(res => res.json());
-        state.participants = data.participantData;
+        const data = await fetch(getApiUrl() + "/get-score-data").then(res => res.json());
+        state.participants = data.participantData.participants;
     }
 
     return () => html`<points-manager .pointsData=${state.participants}></points-manager>`;

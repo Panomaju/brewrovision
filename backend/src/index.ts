@@ -12,6 +12,34 @@ const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 
 const sockets: WSContext<WebSocket>[] = [];
 
+const COUNTRIES: Country[] = [
+  {
+    id: 1,
+    name: "Finland",
+    flag: "https://www.countryflags.com/wp-content/uploads/finland-flag-png-large.png",
+  },
+  {
+    id: 2,
+    name: "Scotland",
+    flag: "https://www.countryflags.com/wp-content/uploads/scotland-flag-jpg-xl.jpg",
+  },
+  {
+    id: 3,
+    name: "England",
+    flag: "https://www.countryflags.com/wp-content/uploads/england-flag-jpg-xl.jpg",
+  },
+  {
+    id: 4,
+    name: "Ireland",
+    flag: "https://www.countryflags.com/wp-content/uploads/ireland-flag-png-large.png",
+  },
+  {
+    id: 5,
+    name: "Poland",
+    flag: "https://www.countryflags.com/wp-content/uploads/poland-flag-png-large.png",
+  },
+];
+
 app.get(
   "/ws",
   upgradeWebSocket((c) => {
@@ -61,6 +89,38 @@ app.get("/get-data", (c) => {
   });
 });
 
+function getScoresForCountry(country: Country, participantData: any) {
+  return participantData.participants.reduce((acc: number, part: any) => {
+    Object.values(part.scores as CategoryScores[][]).forEach(
+      (categoryScoreArrays) => {
+        categoryScoreArrays.forEach((categoryScores) => {
+          if (categoryScores.countryId != country.id) {
+            return;
+          }
+          if (categoryScores.score > 0) {
+            console.log("Adding score " + categoryScores.score);
+          }
+          acc += categoryScores.score;
+        });
+      },
+    );
+    return acc;
+  }, 0);
+}
+
+app.get("/get-score-data", (c) => {
+  const participantData = readData(DATA_FILE_PATH);
+  const participants = COUNTRIES.map((country) => ({
+    ...country,
+    score: getScoresForCountry(country, participantData),
+  }));
+  return c.json({
+    participantData: {
+      participants,
+    },
+  });
+});
+
 app.post("/update-participant-data", async (c) => {
   let data = await c.req.json();
 
@@ -101,34 +161,6 @@ function checkForDataFile() {
   if (existsSync(DATA_FILE_PATH)) {
     return;
   }
-
-  const COUNTRIES: Country[] = [
-    {
-      id: 1,
-      name: "Finland",
-      flag: "https://www.countryflags.com/wp-content/uploads/finland-flag-png-large.png",
-    },
-    {
-      id: 2,
-      name: "Scotland",
-      flag: "https://www.countryflags.com/wp-content/uploads/scotland-flag-jpg-xl.jpg",
-    },
-    {
-      id: 3,
-      name: "England",
-      flag: "https://www.countryflags.com/wp-content/uploads/england-flag-jpg-xl.jpg",
-    },
-    {
-      id: 4,
-      name: "Ireland",
-      flag: "https://www.countryflags.com/wp-content/uploads/ireland-flag-png-large.png",
-    },
-    {
-      id: 5,
-      name: "Poland",
-      flag: "https://www.countryflags.com/wp-content/uploads/poland-flag-png-large.png",
-    },
-  ];
 
   function createScoreObject(country: Country): CategoryScores[] {
     return COUNTRIES.filter((c) => c.id !== country.id).map((c) => ({

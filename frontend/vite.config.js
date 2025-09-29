@@ -1,8 +1,9 @@
 import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
 
 /** @type { import("vite").UserConfig} */
 const config = defineConfig({
-    plugins: [],
+    plugins: [tailwindcss()],
     build: {
         minify: false,
         rollupOptions: {},

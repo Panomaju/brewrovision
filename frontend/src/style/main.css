@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root,
 html {
     font-family: "Roboto", serif;
