@@ -90,6 +90,7 @@ app.get("/get-data", (c) => {
 });
 
 function getScoresForCountry(country: Country, participantData: any) {
+  // This one is a mega oof but it's done also in a time crunch
   return participantData.participants.reduce((acc: number, part: any) => {
     Object.values(part.scores as CategoryScores[][]).forEach(
       (categoryScoreArrays) => {
@@ -97,10 +98,9 @@ function getScoresForCountry(country: Country, participantData: any) {
           if (categoryScores.countryId != country.id) {
             return;
           }
-          if (categoryScores.score > 0) {
-            console.log("Adding score " + categoryScores.score);
+          if (categoryScores.score > 0 && categoryScores.published) {
+            acc += categoryScores.score;
           }
-          acc += categoryScores.score;
         });
       },
     );
@@ -113,7 +113,7 @@ app.get("/get-score-data", (c) => {
   const participants = COUNTRIES.map((country) => ({
     ...country,
     score: getScoresForCountry(country, participantData),
-  }));
+  })).sort((a, b) => b.score - a.score);
   return c.json({
     participantData: {
       participants,
@@ -153,6 +153,7 @@ interface Country {
 interface CategoryScores {
   countryId: number;
   score: number;
+  published: boolean;
 }
 
 function checkForDataFile() {

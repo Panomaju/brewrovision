@@ -4,6 +4,10 @@ import { createState } from "suunta/state";
 import { getApiUrl } from "../env.js";
 import { onNavigation } from "suunta/triggers";
 
+/**
+ * This file was written in a extreme time crunch. Do not judge the code quality of it. It 'just works'
+ * */
+
 const TERMS = {
     Tallenna:
         "Tallentaminen tarkoittaa, että tiedot on tallennettu taustajärjestelmään. Tallennettu tieto ladataan aina kun sivun lataa uudelleen",
