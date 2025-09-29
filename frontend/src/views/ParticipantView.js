@@ -3,6 +3,7 @@ import "../components/points-manager.js";
 import { createState } from "suunta/state";
 import { getApiUrl } from "../env.js";
 import { onNavigation } from "suunta/triggers";
+import { when } from "lit/directives/when.js";
 
 /**
  * This file was written in a extreme time crunch. Do not judge the code quality of it. It 'just works'
@@ -80,6 +81,14 @@ export function ParticipantView() {
             </div>
 
             <div class="participants">
+                ${when(
+                    state.participants.length <= 0,
+                    () => html`
+                        <p class="text-red-500 text-xl">
+                            Ei saatu yhteyttä palvelimeen. Päivitä sivu ja yritä uudelleen
+                        </p>
+                    `,
+                )}
                 ${state.participants.map(
                     participant => html`
                         <div class="flex flex-col">

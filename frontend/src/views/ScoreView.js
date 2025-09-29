@@ -5,11 +5,16 @@ import { createState } from "suunta/state";
 import { onNavigation } from "suunta/triggers";
 
 export function ScoreView() {
+    /** @type { WebSocket } */
     let ws;
 
     function initWs() {
         console.log("Attempting to open ws connection");
         ws = new WebSocket(getApiUrl() + "/ws");
+
+        ws.onopen = () => {
+            updateData();
+        };
 
         ws.onmessage = msg => {
             console.log("mssage ", msg);
@@ -38,5 +43,10 @@ export function ScoreView() {
         state.participants = data.participantData.participants;
     }
 
-    return () => html`<points-manager .pointsData=${state.participants}></points-manager>`;
+    return () => {
+        if (!ws || ws.readyState === ws.CONNECTING) {
+            return html`<p class="text-white">Initializing connection...</p>`;
+        }
+        return html`<points-manager .pointsData=${state.participants}></points-manager>`;
+    };
 }
