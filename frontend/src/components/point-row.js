@@ -24,14 +24,14 @@ export class PointRow extends LitElement {
      */
     updated(_changedProperties) {
         if (_changedProperties.has("points")) {
-            if (this.shownPoints < this.points) {
+            if (this.shownPoints != this.points) {
                 this.addShownPointWithDelay();
             }
             this.pointsChange = this.points - _changedProperties.get("points");
         }
         if (_changedProperties.has("shownPoints")) {
             if (this.shownPoints < this.points) {
-                this.addShownPointWithDelay();
+                //this.addShownPointWithDelay();
             }
         }
     }
@@ -40,13 +40,18 @@ export class PointRow extends LitElement {
         const delay = 25;
         setTimeout(
             () => {
-                if (this.shownPoints >= this.points) {
+                if (this.shownPoints === this.points) {
                     setTimeout(() => {
                         this.pointsChange = undefined;
                     }, 2000);
                     return;
                 }
-                this.shownPoints += 1;
+                if (this.shownPoints < this.points) {
+                    this.shownPoints += 1;
+                } else {
+                    this.shownPoints -= 1;
+                }
+                this.addShownPointWithDelay();
             },
             Math.floor(Math.random() * delay * 2) + delay,
         );
@@ -62,7 +67,9 @@ export class PointRow extends LitElement {
             </div>
 
             <div class="right-side">
-                <p ?hidden=${!this.pointsChange} class="points-change">+ ${this.pointsChange}</p>
+                <p ?hidden=${!this.pointsChange} class="points-change">
+                    ${this.pointsChange > 0 ? "+" : ""} ${this.pointsChange}
+                </p>
                 <p class="total-points">${this.shownPoints}</p>
             </div>
         `;
