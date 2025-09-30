@@ -45,7 +45,7 @@ export function ScoreView() {
 
     return () => {
         if (!ws || ws.readyState === ws.CONNECTING) {
-            return html`<p class="text-white">Initializing connection...</p>`;
+            return html`<p class="text-black">Initializing connection...</p>`;
         }
         return html`<points-manager .pointsData=${state.participants}></points-manager>`;
     };
