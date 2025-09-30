@@ -5,12 +5,14 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "npm run dev",
-    "run:prod": "npm run build && npm run start"
+    "prod:start": "npm run build && pm2 start --name panomaju dist/index.js",
+    "prod:stop": "pm2 stop panomaju && pm2 delete panomaju"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.3",
     "@hono/node-ws": "^1.2.0",
-    "hono": "^4.9.8"
+    "hono": "^4.9.8",
+    "pm2": "^6.0.13"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
