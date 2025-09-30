@@ -4,6 +4,7 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import type { WSContext } from "hono/ws";
+import { computeStandings } from "./get-final-scores.js";
 
 const app = new Hono();
 app.use("*", cors());
@@ -119,6 +120,12 @@ app.get("/get-score-data", (c) => {
       participants,
     },
   });
+});
+
+app.get("/get-final-score-data", (c) => {
+  const participantData = readData(DATA_FILE_PATH);
+  const standings = computeStandings(participantData);
+  return c.json({ standings });
 });
 
 app.post("/update-participant-data", async (c) => {

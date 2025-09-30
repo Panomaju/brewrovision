@@ -2,6 +2,7 @@ import { html, render } from "lit";
 import { Suunta } from "suunta";
 import { ScoreView } from "./views/ScoreView";
 import { ParticipantView } from "./views/ParticipantView";
+import { FinalScoresView } from "./views/FinalScoresView";
 
 const routes = [
     {
@@ -11,6 +12,10 @@ const routes = [
     {
         path: "/participants",
         view: ParticipantView,
+    },
+    {
+        path: "/scores",
+        view: FinalScoresView,
     },
 ];
 
