@@ -6,7 +6,8 @@
     "build": "tsc",
     "start": "npm run dev",
     "prod:start": "npm run build && pm2 start --name panomaju dist/index.js",
-    "prod:stop": "pm2 stop panomaju && pm2 delete panomaju"
+    "prod:stop": "pm2 stop panomaju && pm2 delete panomaju",
+    "prod:status": "pm2 status"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.3",
