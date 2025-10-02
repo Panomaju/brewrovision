@@ -29,11 +29,6 @@ export class PointRow extends LitElement {
             }
             this.pointsChange = this.points - _changedProperties.get("points");
         }
-        if (_changedProperties.has("shownPoints")) {
-            if (this.shownPoints < this.points) {
-                //this.addShownPointWithDelay();
-            }
-        }
     }
 
     addShownPointWithDelay() {
@@ -43,7 +38,7 @@ export class PointRow extends LitElement {
                 if (this.shownPoints === this.points) {
                     setTimeout(() => {
                         this.pointsChange = undefined;
-                    }, 2000);
+                    }, 20000);
                     return;
                 }
                 if (this.shownPoints < this.points) {
@@ -78,7 +73,9 @@ export class PointRow extends LitElement {
     static styles = css`
         :host {
             display: flex;
-            background: #fff;
+            background: steelblue;
+            color: #fff;
+            padding: 0.5rem;
         }
 
         :host > div {
@@ -110,7 +107,8 @@ export class PointRow extends LitElement {
 
         .points-change {
             padding: 0.5rem;
-            background: lightblue;
+            background: white;
+            color: steelblue;
             width: 4ch;
             text-align: center;
         }
