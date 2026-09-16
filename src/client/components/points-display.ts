@@ -1,8 +1,9 @@
 import { css, html, LitElement } from "lit";
 
+// Simple vertical container that lays out the point rows with a gap.
 export class PointsDisplay extends LitElement {
     render() {
-        return html` <slot></slot> `;
+        return html`<slot></slot>`;
     }
 
     static styles = css`
