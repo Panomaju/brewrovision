@@ -1,6 +1,8 @@
-import { css, html, LitElement } from "lit";
-import { when } from "lit/directives/when.js";
+import { css, html, LitElement, type PropertyValues } from "lit";
 
+// A single country row on the overlay. `points` is the true total; `shownPoints`
+// ticks up toward it for the animated count-up, and `pointsChange` briefly shows
+// the delta of the last reveal.
 export class PointRow extends LitElement {
     static properties = {
         logo: { type: String },
@@ -10,24 +12,21 @@ export class PointRow extends LitElement {
         pointsChange: { type: Number },
     };
 
-    constructor() {
-        super();
-        this.logo = "";
-        this.name = "";
-        this.points = 0;
-        this.shownPoints = 0;
-        this.pointsChange = undefined;
-    }
+    logo = "";
+    name = "";
+    points = 0;
+    shownPoints = 0;
+    pointsChange: number | undefined = undefined;
 
-    /**
-     * @param {import("lit").PropertyValues} _changedProperties
-     */
-    updated(_changedProperties) {
-        if (_changedProperties.has("points")) {
+    updated(changed: PropertyValues) {
+        if (changed.has("points")) {
             if (this.shownPoints != this.points) {
                 this.addShownPointWithDelay();
             }
-            this.pointsChange = this.points - _changedProperties.get("points");
+            const prev = changed.get("points") as number | undefined;
+            if (prev !== undefined) {
+                this.pointsChange = this.points - prev;
+            }
         }
     }
 
@@ -56,14 +55,14 @@ export class PointRow extends LitElement {
         return html`
             <div class="left-side">
                 <div class="logo-holder">
-                    <img src="${this.logo}" />
+                    <img src="${this.logo}" alt="" />
                 </div>
                 <p class="name-field">${this.name}</p>
             </div>
 
             <div class="right-side">
                 <p ?hidden=${!this.pointsChange} class="points-change">
-                    ${this.pointsChange > 0 ? "+" : ""} ${this.pointsChange}
+                    ${this.pointsChange && this.pointsChange > 0 ? "+" : ""}${this.pointsChange}
                 </p>
                 <p class="total-points">${this.shownPoints}</p>
             </div>
@@ -73,9 +72,11 @@ export class PointRow extends LitElement {
     static styles = css`
         :host {
             display: flex;
-            background: steelblue;
+            background: linear-gradient(90deg, #1e3a8a, #2563eb);
             color: #fff;
             padding: 0.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
         }
 
         :host > div {
@@ -94,11 +95,12 @@ export class PointRow extends LitElement {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 150px;
+            width: 84px;
         }
 
         .logo-holder img {
             width: 100%;
+            border-radius: 3px;
         }
 
         *[hidden] {
@@ -107,10 +109,11 @@ export class PointRow extends LitElement {
 
         .points-change {
             padding: 0.5rem;
-            background: white;
-            color: steelblue;
+            background: #fbbf24;
+            color: #1e3a8a;
             width: 4ch;
             text-align: center;
+            border-radius: 0.375rem;
         }
 
         .total-points {
@@ -125,6 +128,7 @@ export class PointRow extends LitElement {
 
         .right-side {
             padding: 0 1rem;
+            gap: 0.75rem;
             justify-content: flex-end;
         }
     `;
