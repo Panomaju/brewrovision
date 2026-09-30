@@ -17,13 +17,14 @@ export interface CategoryTable {
     sort_order: number;
 }
 
+// SQLite has no native boolean — `revealed` is stored as 0/1 integer.
 export interface VoteTable {
     id: Generated<number>;
     from_country_id: number;
     category_id: number;
     to_country_id: number;
     points: number;
-    revealed: boolean;
+    revealed: number;
 }
 
 export interface Database {

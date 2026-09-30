@@ -3,6 +3,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { createNodeWebSocket } from "@hono/node-ws";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { HTTPException } from "hono/http-exception";
 import type { WSContext } from "hono/ws";
 import { existsSync, readFileSync } from "fs";
 import { db } from "./db.js";
@@ -11,6 +12,15 @@ import { POINT_LADDER, type Vote } from "../shared/types.js";
 
 const app = new Hono();
 app.use("/api/*", cors());
+
+// Never let a thrown handler take the process down — log and return JSON 500.
+app.onError((err, c) => {
+    if (err instanceof HTTPException) {
+        return err.getResponse();
+    }
+    console.error("[api error]", err);
+    return c.json({ error: "internal_error" }, 500);
+});
 
 const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 
@@ -33,6 +43,9 @@ app.get(
             sockets.add(ws);
         },
         onClose(_evt, ws) {
+            sockets.delete(ws);
+        },
+        onError(_evt, ws) {
             sockets.delete(ws);
         },
     })),
@@ -81,7 +94,7 @@ app.get("/api/votes", async (c) => {
         categoryId: r.category_id,
         toCountryId: r.to_country_id,
         points: r.points,
-        revealed: r.revealed,
+        revealed: r.revealed === 1,
     }));
     return c.json({ votes });
 });
@@ -120,7 +133,7 @@ app.post("/api/ballot/reveal", async (c) => {
 
     await db
         .updateTable("vote")
-        .set({ revealed: body.revealed })
+        .set({ revealed: body.revealed ? 1 : 0 })
         .where("from_country_id", "=", body.fromCountryId)
         .where("category_id", "=", body.categoryId)
         .execute();
@@ -161,3 +174,13 @@ const server = serve({ fetch: app.fetch, port: PORT }, (info) => {
 });
 
 injectWebSocket(server);
+
+// Last-resort safety nets so a stray throw in an async callback or a broken
+// WS frame can't kill the whole server mid-competition. Log loudly and keep
+// running — the request that caused it is already lost, but the process isn't.
+process.on("uncaughtException", (err) => {
+    console.error("[uncaughtException]", err);
+});
+process.on("unhandledRejection", (reason) => {
+    console.error("[unhandledRejection]", reason);
+});

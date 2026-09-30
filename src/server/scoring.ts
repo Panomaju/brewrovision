@@ -13,7 +13,7 @@ export async function getOverallStandings(): Promise<StandingEntry[]> {
         .leftJoin("vote", (join) =>
             join
                 .onRef("vote.to_country_id", "=", "country.id")
-                .on("vote.revealed", "=", true),
+                .on("vote.revealed", "=", 1),
         )
         .select([
             "country.id as countryId",
@@ -40,7 +40,7 @@ export async function getCategoryStandings(): Promise<CategoryStandings[]> {
     const rows = await db
         .selectFrom("vote")
         .innerJoin("country", "country.id", "vote.to_country_id")
-        .where("vote.revealed", "=", true)
+        .where("vote.revealed", "=", 1)
         .select([
             "vote.category_id as categoryId",
             "country.id as countryId",

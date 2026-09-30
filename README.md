@@ -14,9 +14,10 @@ country's points, then reveals them one ballot at a time onto the live overlay.
 A single app, one deploy:
 
 - **Server** — Hono (`src/server`): REST API + websocket, and serves the built
-  client. Talks to Postgres via Kysely.
+  client. Talks to SQLite via Kysely.
 - **Client** — Lit + Suunta router (`src/client`), built by Vite.
-- **Database** — Postgres, so multiple crew machines can edit concurrently.
+- **Database** — SQLite file on disk (WAL mode). One process writes; write
+  volume for a single-evening competition is tiny.
 
 Three routes:
 
@@ -30,25 +31,38 @@ Three routes:
 docker compose up -d --build
 ```
 
-Brings up Postgres + the app, runs migrations automatically, and serves
-everything on port **3000**. Postgres is exposed on 5432 so other crew machines
-on the network can point their own app instance at the same database.
+Brings up the app, runs migrations automatically, and serves everything on
+`127.0.0.1:3000`. The SQLite file lives in a named volume (`db-data` →
+`/data/brewrovision.db`), so it survives container rebuilds.
+
+The container binds to loopback only — put nginx or Caddy in front of it and
+let the reverse proxy terminate TLS. Example Caddyfile:
+
+```
+brewrovision.example.com {
+    reverse_proxy 127.0.0.1:3000
+}
+```
+
+Caddy handles websocket upgrades on `/ws` automatically.
 
 ## Local development
 
 ```bash
 npm install
-cp .env.example .env          # adjust DATABASE_URL if needed
-# start Postgres however you like, e.g.:
-docker compose up -d db
+cp .env.example .env          # adjust DATABASE_PATH if needed
 npm run migrate               # create tables + seed countries/categories
 npm run dev                   # server on :3000, Vite client on :8000
 ```
 
 Open http://localhost:8000. The Vite dev server proxies `/api` and `/ws` to the
-server, so everything is same-origin.
+server, so everything is same-origin. The SQLite file defaults to
+`./data/brewrovision.db` (git-ignored).
 
 ## Notes
 
 - Migrations are idempotent (`npm run migrate`); safe to run on every deploy.
 - No auth — this is a private site on a trusted network, by design.
+- Handler errors are caught by `app.onError` and return JSON 500 rather than
+  crashing; `uncaughtException` / `unhandledRejection` are logged instead of
+  killing the process.

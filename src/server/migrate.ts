@@ -27,7 +27,7 @@ async function createTables() {
     await db.schema
         .createTable("country")
         .ifNotExists()
-        .addColumn("id", "serial", (c) => c.primaryKey())
+        .addColumn("id", "integer", (c) => c.primaryKey().autoIncrement())
         .addColumn("name", "text", (c) => c.notNull().unique())
         .addColumn("flag_img", "text", (c) => c.notNull())
         .addColumn("sort_order", "integer", (c) => c.notNull())
@@ -36,7 +36,7 @@ async function createTables() {
     await db.schema
         .createTable("category")
         .ifNotExists()
-        .addColumn("id", "serial", (c) => c.primaryKey())
+        .addColumn("id", "integer", (c) => c.primaryKey().autoIncrement())
         .addColumn("name", "text", (c) => c.notNull().unique())
         .addColumn("focus", "text", (c) => c.notNull())
         .addColumn("sort_order", "integer", (c) => c.notNull())
@@ -45,12 +45,12 @@ async function createTables() {
     await db.schema
         .createTable("vote")
         .ifNotExists()
-        .addColumn("id", "serial", (c) => c.primaryKey())
+        .addColumn("id", "integer", (c) => c.primaryKey().autoIncrement())
         .addColumn("from_country_id", "integer", (c) => c.notNull().references("country.id"))
         .addColumn("category_id", "integer", (c) => c.notNull().references("category.id"))
         .addColumn("to_country_id", "integer", (c) => c.notNull().references("country.id"))
         .addColumn("points", "integer", (c) => c.notNull().defaultTo(0))
-        .addColumn("revealed", "boolean", (c) => c.notNull().defaultTo(false))
+        .addColumn("revealed", "integer", (c) => c.notNull().defaultTo(0))
         .addUniqueConstraint("vote_ballot_unique", ["from_country_id", "category_id", "to_country_id"])
         .addCheckConstraint("vote_not_self", sql`from_country_id <> to_country_id`)
         .execute();
@@ -87,7 +87,7 @@ async function seed() {
         category_id: number;
         to_country_id: number;
         points: number;
-        revealed: boolean;
+        revealed: number;
     }[] = [];
     for (const from of countries) {
         for (const cat of categories) {
@@ -98,7 +98,7 @@ async function seed() {
                     category_id: cat.id,
                     to_country_id: to.id,
                     points: 0,
-                    revealed: false,
+                    revealed: 0,
                 });
             }
         }

@@ -1,34 +1,16 @@
 services:
-    db:
-        image: postgres:16-alpine
-        restart: unless-stopped
-        environment:
-            POSTGRES_USER: brewro
-            POSTGRES_PASSWORD: brewro
-            POSTGRES_DB: brewrovision
-        volumes:
-            - db-data:/var/lib/postgresql/data
-        ports:
-            # Exposed so other crew machines on the network can also connect
-            # directly to Postgres if needed.
-            - "5432:5432"
-        healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U brewro -d brewrovision"]
-            interval: 5s
-            timeout: 5s
-            retries: 10
-
     app:
         build: .
         restart: unless-stopped
-        depends_on:
-            db:
-                condition: service_healthy
         environment:
-            DATABASE_URL: postgres://brewro:brewro@db:5432/brewrovision
+            DATABASE_PATH: /data/brewrovision.db
             PORT: 3000
+        volumes:
+            - db-data:/data
         ports:
-            - "3000:3000"
+            # Bind to loopback only — put nginx/Caddy in front of this and let
+            # the reverse proxy terminate TLS.
+            - "127.0.0.1:3000:3000"
 
 volumes:
     db-data:
