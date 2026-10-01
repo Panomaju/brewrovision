@@ -123,20 +123,27 @@ app.post("/api/ballot", async (c) => {
     return c.json({ ok: true });
 });
 
-// Reveal (or hide) a whole ballot on the overlay.
+// Reveal (or hide) a ballot — either the whole ballot, or just a specific
+// subset of to-countries (used by the "top/bottom 3" buttons in the admin).
 app.post("/api/ballot/reveal", async (c) => {
     const body = await c.req.json<{
         fromCountryId: number;
         categoryId: number;
         revealed: boolean;
+        toCountryIds?: number[];
     }>();
 
-    await db
+    let q = db
         .updateTable("vote")
         .set({ revealed: body.revealed ? 1 : 0 })
         .where("from_country_id", "=", body.fromCountryId)
-        .where("category_id", "=", body.categoryId)
-        .execute();
+        .where("category_id", "=", body.categoryId);
+
+    if (body.toCountryIds && body.toCountryIds.length > 0) {
+        q = q.where("to_country_id", "in", body.toCountryIds);
+    }
+
+    await q.execute();
 
     broadcastUpdate();
     return c.json({ ok: true });

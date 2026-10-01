@@ -48,10 +48,35 @@ export function AdminView() {
         return v ? v.points : 0;
     }
 
-    function isRevealed(fromId: number, catId: number): boolean {
-        return state.votes.some(
-            (x) => x.fromCountryId === fromId && x.categoryId === catId && x.revealed,
+    function isVoteRevealed(fromId: number, catId: number, toId: number): boolean {
+        const v = state.votes.find(
+            (x) => x.fromCountryId === fromId && x.categoryId === catId && x.toCountryId === toId,
         );
+        return v ? v.revealed : false;
+    }
+
+    // The 3 to-countries this ballot gave the highest ("top") or lowest
+    // ("bottom") actual points to. Votes with 0 points (unallocated) are
+    // excluded so empty ballots don't fall back to UI order.
+    function topBottomIds(fromId: number, catId: number, which: "top" | "bottom"): number[] {
+        const votes = state.votes
+            .filter(
+                (v) =>
+                    v.fromCountryId === fromId && v.categoryId === catId && v.points > 0,
+            )
+            .slice()
+            .sort((a, b) => (which === "top" ? b.points - a.points : a.points - b.points));
+        return votes.slice(0, 3).map((v) => v.toCountryId);
+    }
+
+    function allRevealed(fromId: number, catId: number, toIds: number[]): boolean {
+        return toIds.length > 0 && toIds.every((id) => isVoteRevealed(fromId, catId, id));
+    }
+
+    function revealedCount(fromId: number, catId: number): number {
+        return state.votes.filter(
+            (v) => v.fromCountryId === fromId && v.categoryId === catId && v.revealed,
+        ).length;
     }
 
     function flash(msg: string) {
@@ -79,23 +104,76 @@ export function AdminView() {
         flash("Saved");
     }
 
-    async function toggleReveal(fromId: number, catId: number) {
-        const revealed = !isRevealed(fromId, catId);
+    async function revealGroup(
+        fromId: number,
+        catId: number,
+        toCountryIds: number[],
+        revealed: boolean,
+    ) {
+        if (toCountryIds.length === 0) return;
         await fetch(apiUrl("/api/ballot/reveal"), {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ fromCountryId: fromId, categoryId: catId, revealed }),
+            body: JSON.stringify({
+                fromCountryId: fromId,
+                categoryId: catId,
+                revealed,
+                toCountryIds,
+            }),
         });
         await loadAll();
         flash(revealed ? "Revealed on overlay" : "Hidden from overlay");
     }
 
+    const eyeOpenIcon = () => html`
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5 text-emerald-400"
+            aria-label="revealed"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+            />
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+        </svg>
+    `;
+
+    const eyeShutIcon = () => html`
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5 text-slate-500"
+            aria-label="hidden"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.243 4.243L9.88 9.88"
+            />
+        </svg>
+    `;
+
     const selectField = (fromId: number, catId: number, to: Country) => {
         const current = getPoints(fromId, catId, to.id);
+        const revealed = isVoteRevealed(fromId, catId, to.id);
         return html`
             <label class="flex items-center gap-3">
                 <img class="w-7 rounded-sm" src="${to.flagImg}" alt="" />
                 <span class="flex-1">${to.name}</span>
+                ${revealed ? eyeOpenIcon() : eyeShutIcon()}
                 <select
                     name="to-${to.id}"
                     class="bg-slate-900 border border-slate-600 rounded px-2 py-1 text-slate-100"
@@ -110,18 +188,23 @@ export function AdminView() {
     };
 
     const ballotCard = (from: Country, catId: number) => {
-        const revealed = isRevealed(from.id, catId);
+        const total = Math.max(state.countries.length - 1, 0);
+        const revealed = revealedCount(from.id, catId);
+        const bottomIds = topBottomIds(from.id, catId, "bottom");
+        const topIds = topBottomIds(from.id, catId, "top");
+        const bottomRevealed = allRevealed(from.id, catId, bottomIds);
+        const topRevealed = allRevealed(from.id, catId, topIds);
         return html`
             <div class="rounded-lg border border-slate-700 bg-slate-800/50 p-4">
                 <div class="flex items-center gap-3 mb-3">
                     <img class="w-8 rounded-sm" src="${from.flagImg}" alt="" />
                     <h3 class="text-lg font-bold flex-1">${from.name}'s votes</h3>
                     <span
-                        class="text-xs px-2 py-0.5 rounded ${revealed
+                        class="text-xs px-2 py-0.5 rounded ${revealed === total && total > 0
                             ? "bg-emerald-500/20 text-emerald-300"
                             : "bg-slate-600/40 text-slate-300"}"
                     >
-                        ${revealed ? "revealed" : "hidden"}
+                        ${revealed}/${total} revealed
                     </span>
                 </div>
                 <form
@@ -135,7 +218,7 @@ export function AdminView() {
                             .filter((c) => c.id !== from.id)
                             .map((to) => selectField(from.id, catId, to))}
                     </div>
-                    <div class="flex gap-3 mt-4">
+                    <div class="flex gap-3 mt-4 flex-wrap">
                         <button
                             type="submit"
                             class="bg-sky-600 hover:bg-sky-500 rounded px-4 py-1.5 font-medium"
@@ -144,12 +227,22 @@ export function AdminView() {
                         </button>
                         <button
                             type="button"
-                            @click=${() => toggleReveal(from.id, catId)}
-                            class="${revealed
+                            @click=${() =>
+                                revealGroup(from.id, catId, bottomIds, !bottomRevealed)}
+                            class="${bottomRevealed
                                 ? "bg-slate-600 hover:bg-slate-500"
                                 : "bg-emerald-600 hover:bg-emerald-500"} rounded px-4 py-1.5 font-medium"
                         >
-                            ${revealed ? "Hide" : "Reveal"}
+                            ${bottomRevealed ? "Hide bottom 3" : "Reveal bottom 3"}
+                        </button>
+                        <button
+                            type="button"
+                            @click=${() => revealGroup(from.id, catId, topIds, !topRevealed)}
+                            class="${topRevealed
+                                ? "bg-slate-600 hover:bg-slate-500"
+                                : "bg-emerald-600 hover:bg-emerald-500"} rounded px-4 py-1.5 font-medium"
+                        >
+                            ${topRevealed ? "Hide top 3" : "Reveal top 3"}
                         </button>
                     </div>
                 </form>
