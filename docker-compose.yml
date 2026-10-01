@@ -1,5 +1,6 @@
 services:
     app:
+        container_name: brewrovision
         build: .
         restart: unless-stopped
         environment:
@@ -11,6 +12,12 @@ services:
             # Bind to loopback only — put nginx/Caddy in front of this and let
             # the reverse proxy terminate TLS.
             - "127.0.0.1:3000:3000"
+        networks:
+          - proxy
 
 volumes:
     db-data:
+
+networks:
+  proxy:
+    external: true
