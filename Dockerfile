@@ -24,4 +24,5 @@ ENV DATABASE_PATH=/data/brewrovision.db
 EXPOSE 3000
 
 # Run migrations (idempotent) then start the server.
-CMD ["sh", "-c", "npm run migrate && npm run start"]
+#CMD ["sh", "-c", "npm run migrate && npm run start"]
+CMD ["sh", "-c", "npm run start"]

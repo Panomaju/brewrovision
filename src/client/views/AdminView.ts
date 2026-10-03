@@ -41,6 +41,13 @@ export function AdminView() {
 
     onNavigation(() => loadAll());
 
+    // Switching tabs always re-reads the DB: the crew often has several admin
+    // tabs/devices open, so a stale cached ballot is worse than the extra call.
+    async function selectCategory(catId: number) {
+        state.selectedCategoryId = catId;
+        await loadAll();
+    }
+
     function getPoints(fromId: number, catId: number, toId: number): number {
         const v = state.votes.find(
             (x) => x.fromCountryId === fromId && x.categoryId === catId && x.toCountryId === toId,
@@ -266,7 +273,7 @@ export function AdminView() {
                           ${state.categories.map(
                               (cat) => html`
                                   <button
-                                      @click=${() => (state.selectedCategoryId = cat.id)}
+                                      @click=${() => selectCategory(cat.id)}
                                       class="${cat.id === catId
                                           ? "bg-sky-600"
                                           : "bg-slate-700 hover:bg-slate-600"} rounded px-3 py-1.5 text-sm font-medium"
